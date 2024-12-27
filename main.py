@@ -112,6 +112,7 @@ def gameplay():
 
 
 
+koordination_for_arbuz = None
 
 # Основной цикл игры
 while running:#Некое тело, т.е отвечает за действие
@@ -133,7 +134,7 @@ while running:#Некое тело, т.е отвечает за действие
 
             elif text_rect_join.collidepoint(mouse_pos):
                 print("Вы присоединились к игре")
-
+""
             elif text_rect_settings.collidepoint(mouse_pos):
                 print("Вы открыли настройки")
 
@@ -148,7 +149,7 @@ while running:#Некое тело, т.е отвечает за действие
 
     #Конец цикла событий
     #Начало цикла While(начало действия)
-    if proverka_nacgatiy == 1:
+    if proverka_nacgatiy == 1 and koordination_for_arbuz:
         screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
         screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]))
 
