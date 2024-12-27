@@ -141,20 +141,24 @@ while running:#Некое тело, т.е отвечает за действие
                 print("Вы вышли")
                 running = False  # Выход из игры при нажатии на "Выход"
 
-            if current_arbuz_rect.collidepoint(mouse_pos):
+            if current_arbuz_rect.collidepoint(mouse_pos):#Проверяем было ли нажатие мышки по области арбуза
                 print("Вы попали")
+                koordination_for_arbuz = event.pos
                 proverka_nacgatiy = 1
 
     #Конец цикла событий
     #Начало цикла While(начало действия)
+    if proverka_nacgatiy == 1:
+        screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
+        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]))
+
     if proverka_ekranov == 1:
         gameplay()
+
     else:
         start_screen()
-    if proverka_nacgatiy == 1:
-        screen.blit(left_part_of_arbuz, (mouse_pos))
-        screen.blit(right_part_of_arbuz, (mouse_pos[0] + 200, mouse_pos[-1]))
 
+    print(proverka_ekranov)
     pygame.display.flip()#Обновление экрана
     #Конец цикла действия
 
