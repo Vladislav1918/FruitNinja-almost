@@ -77,6 +77,9 @@ def gameplay():
 
     screen.blit(Game_screen, (0, 0))
 
+    if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты 
+        screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
+        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]))
 
 
     if not fruit_active:
@@ -129,29 +132,26 @@ while running:#Некое тело, т.е отвечает за действие
             if text_rect_start.collidepoint(mouse_pos):
                 proverka_ekranov = 1
 
-            elif mouse_pos[0] >= 300 and mouse_pos[0] <=500 and mouse_pos[-1] >=200 and mouse_pos[-1] <= 300:
+            elif mouse_pos[0] >= 300 and mouse_pos[0] <= 500 and mouse_pos[1] >= 200 and mouse_pos[1] <= 300:
                 print("Вы нажали на прямоугольник")
 
             elif text_rect_join.collidepoint(mouse_pos):
                 print("Вы присоединились к игре")
-""
-            elif text_rect_settings.collidepoint(mouse_pos):
+
+            elif text_rect_settings.collidepoint(mouse_pos):  # Убедитесь, что отступ правильный
                 print("Вы открыли настройки")
 
             elif text_rect_exit.collidepoint(mouse_pos):
                 print("Вы вышли")
                 running = False  # Выход из игры при нажатии на "Выход"
 
-            if current_arbuz_rect.collidepoint(mouse_pos):#Проверяем было ли нажатие мышки по области арбуза
+            if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
                 print("Вы попали")
                 koordination_for_arbuz = event.pos
                 proverka_nacgatiy = 1
 
     #Конец цикла событий
     #Начало цикла While(начало действия)
-    if proverka_nacgatiy == 1 and koordination_for_arbuz:
-        screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
-        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]))
 
     if proverka_ekranov == 1:
         gameplay()
