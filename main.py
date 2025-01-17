@@ -39,6 +39,10 @@ napravlenie = 300#Переменная отвечает за направлен�
 shag_napravleniya = 10#Переменная которая узнает шаг направление т.е на сколько он будет изменяться за кадр
 ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 proverka_nacgatiy = 0
+koordination_for_arbuz  = None
+slice_falling = False
+left_part_fall_pas = None
+right_part_fall_pos = None
 
 # Основной цикл
 running = True  # Переменная для основного цикла
@@ -77,9 +81,18 @@ def gameplay():
 
     screen.blit(Game_screen, (0, 0))
 
-    if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты 
+    if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
         screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
-        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]))
+        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 100, koordination_for_arbuz[-1]))
+        rotated_image_for_dolek = pygame.transform.rotate(right_part_of_arbuz, (napravlenie - 200))
+        rotated_image_for_dolek = pygame.transform.rotate(left_part_of_arbuz, (napravlenie - 400))
+        rotated_image_for_dolek_rect = rotated_image_for_dolek.get_rect(center=(int(x), int(y)))
+        screen.blit(rotated_image_for_dolek, rotated_image_for_dolek_rect.topleft)
+
+
+
+
+
 
 
     if not fruit_active:
@@ -112,10 +125,6 @@ def gameplay():
         fruit_active = False
 
 
-
-
-
-koordination_for_arbuz = None
 
 # Основной цикл игры
 while running:#Некое тело, т.е отвечает за действие
