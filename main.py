@@ -43,6 +43,8 @@ koordination_for_arbuz  = None
 slice_falling = False
 left_part_fall_pas = None
 right_part_fall_pos = None
+right_part_arbuz_active = False
+left_part_arbuz_active = False
 
 # Основной цикл
 running = True  # Переменная для основного цикла
@@ -77,25 +79,23 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect
-
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,right_part_arbuz_active,left_part_arbuz_active
     screen.blit(Game_screen, (0, 0))
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
-        screen.blit(left_part_of_arbuz, (koordination_for_arbuz))
-        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 100, koordination_for_arbuz[-1]))
-        rotated_image_for_dolek = pygame.transform.rotate(right_part_of_arbuz, (napravlenie - 200))
-        rotated_image_for_dolek = pygame.transform.rotate(left_part_of_arbuz, (napravlenie - 400))
-        rotated_image_for_dolek_rect = rotated_image_for_dolek.get_rect(center=(int(x), int(y)))
-        screen.blit(rotated_image_for_dolek, rotated_image_for_dolek_rect.topleft)
+        left_part_fall_pas = koordination_for_arbuz[-1]
+        right_part_fall_pos = koordination_for_arbuz[-1]
+        screen.blit(left_part_of_arbuz, (koordination_for_arbuz[0], left_part_fall_pas))
+        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 100, right_part_fall_pos))
+        right_part_arbuz_active = True
+        left_part_arbuz_active = True
+        fruit_active = False
 
 
 
 
 
-
-
-    if not fruit_active:
+    if right_part_arbuz_active == False and left_part_arbuz_active == False and fruit_active == False:
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
         V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
@@ -169,6 +169,7 @@ while running:#Некое тело, т.е отвечает за действие
         start_screen()
 
     print(proverka_ekranov)
+    print(koordination_for_arbuz)
     pygame.display.flip()#Обновление экрана
     #Конец цикла действия
 
