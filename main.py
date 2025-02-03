@@ -41,7 +41,7 @@ ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 proverka_nacgatiy = 0
 koordination_for_arbuz  = None
 slice_falling = False
-left_part_fall_pas = None
+left_part_fall_pos = None
 right_part_fall_pos = None
 right_part_arbuz_active = False
 left_part_arbuz_active = False
@@ -74,7 +74,7 @@ def start_screen():
     screen.blit(text_join, text_rect_join)
     screen.blit(text_settings, text_rect_settings)
     screen.blit(text_exit, text_rect_exit)
-
+# 1  - падение долек 2 - генерация новго арбуза 3- движение арбуза
 
 
 
@@ -83,19 +83,25 @@ def gameplay():
     screen.blit(Game_screen, (0, 0))
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
-        left_part_fall_pas = koordination_for_arbuz[-1]
+        left_part_fall_pos = koordination_for_arbuz[-1]
         right_part_fall_pos = koordination_for_arbuz[-1]
-        screen.blit(left_part_of_arbuz, (koordination_for_arbuz[0], left_part_fall_pas))
+        screen.blit(left_part_of_arbuz, (koordination_for_arbuz[0], left_part_fall_pos))
         screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 100, right_part_fall_pos))
         right_part_arbuz_active = True
         left_part_arbuz_active = True
-        fruit_active = False
+
+    if right_part_arbuz_active == True or left_part_arbuz_active == True:#1
+        left_part_fall_pos += 10
+        right_part_fall_pos += 10
 
 
 
 
 
-    if right_part_arbuz_active == False and left_part_arbuz_active == False and fruit_active == False:
+
+
+
+    if right_part_arbuz_active == False and left_part_arbuz_active == False and fruit_active == False:#2
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
         V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
@@ -111,7 +117,7 @@ def gameplay():
 
     napravlenie += 3
     if ugol_poleta <= 90:
-        rotated_image = pygame.transform.rotate(ves_arbuz, (napravlenie - 2  * napravlenie))#команда отвечает за то, чтобы арбуз мог крутитсья вправо
+        rotated_image = pygame.transform.rotate(ves_arbuz, (napravlenie - (2  * napravlenie)))#команда отвечает за то, чтобы арбуз мог крутитсья вправо
     else:
         rotated_image = pygame.transform.rotate(ves_arbuz, napravlenie)
     rotated_image_rect =  rotated_image.get_rect(center=(int(x), int(y)))#center 
@@ -123,6 +129,8 @@ def gameplay():
     # Проверка выхода за нижнюю границу экрана
     if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
         fruit_active = False
+
+def vrashenie_dolek():
 
 
 
