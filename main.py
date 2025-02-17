@@ -1,6 +1,7 @@
 import pygame  # Импортируем pygame, чтобы его можно было использовать
 import random  # Импортируем рандом чтобы в дальнейшем его использовать для более интересного игрового процесса
 import math    # Модуль для работы с математикой
+import time
 
 pygame.init()  # Инициализируем pygame
 
@@ -39,12 +40,19 @@ napravlenie = 300#Переменная отвечает за направлен�
 shag_napravleniya = 10#Переменная которая узнает шаг направление т.е на сколько он будет изменяться за кадр
 ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 proverka_nacgatiy = 0
+clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
 slice_falling = False
 left_part_fall_pos = None
 right_part_fall_pos = None
 right_part_arbuz_active = False
 left_part_arbuz_active = False
+left_slice_angle = 0
+right_slice_angle = 0
+left_slice_rotation_speed = 0
+right_slice_rotation_speed = 0
+
+
 
 # Основной цикл
 running = True  # Переменная для основного цикла
@@ -67,6 +75,8 @@ text_exit = font.render("Выход", True, red)
 text_rect_exit = text_exit.get_rect(center=(screen_width // 2, 350))
 
 button_rect = pygame.Rect(300,200,200,100)
+
+
 
 def start_screen():
     screen.blit(Home_screen, (0, 0))
@@ -130,15 +140,19 @@ def gameplay():
     if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
         fruit_active = False
 
+
 def vrashenie_dolek():
+    pass
+
+
 
 
 
 # Основной цикл игры
 while running:#Некое тело, т.е отвечает за действие
-
     #Начало цикла событий
     for event in pygame.event.get():#ОТвечает за события т.е некий мозг программы
+        print(event)
         if event.type == pygame.QUIT:
             running = False
 
@@ -148,9 +162,6 @@ while running:#Некое тело, т.е отвечает за действие
 
             if text_rect_start.collidepoint(mouse_pos):
                 proverka_ekranov = 1
-
-            elif mouse_pos[0] >= 300 and mouse_pos[0] <= 500 and mouse_pos[1] >= 200 and mouse_pos[1] <= 300:
-                print("Вы нажали на прямоугольник")
 
             elif text_rect_join.collidepoint(mouse_pos):
                 print("Вы присоединились к игре")
@@ -171,13 +182,13 @@ while running:#Некое тело, т.е отвечает за действие
     #Начало цикла While(начало действия)
 
     if proverka_ekranov == 1:
+        dt = clock.tick(60) / 1000.0#время между кадрами за секунду(установили FPS = 60)
+        print(dt)
         gameplay()
 
     else:
         start_screen()
 
-    print(proverka_ekranov)
-    print(koordination_for_arbuz)
     pygame.display.flip()#Обновление экрана
     #Конец цикла действия
 
