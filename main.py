@@ -43,15 +43,14 @@ proverka_nacgatiy = 0
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
 slice_falling = False
-left_part_fall_pos = None
-right_part_fall_pos = None
-right_part_arbuz_active = False
-left_part_arbuz_active = False
-left_slice_angle = 0
-right_slice_angle = 0
-left_slice_rotation_speed = 0
-right_slice_rotation_speed = 0
 
+
+slices_active = False
+left_part_fall_pos = []# список для координат левой дольки арбуза
+right_part_fall_pos = []# список для координат правой дольки арбуза
+slises_rotation_angle = 0# текущий угол наклона долек арбуза
+slices_fall_speed_y = 0# Скорость падения долек арбуза
+slises_angle_change = 10# Переменная изменения угла для долек арбуза
 
 
 # Основной цикл
@@ -89,7 +88,7 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,right_part_arbuz_active,left_part_arbuz_active
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active
     screen.blit(Game_screen, (0, 0))
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
@@ -100,7 +99,7 @@ def gameplay():
         right_part_arbuz_active = True
         left_part_arbuz_active = True
 
-    if right_part_arbuz_active == True or left_part_arbuz_active == True:#1
+    if slices_active :
         left_part_fall_pos += 10
         right_part_fall_pos += 10
 
@@ -111,7 +110,7 @@ def gameplay():
 
 
 
-    if right_part_arbuz_active == False and left_part_arbuz_active == False and fruit_active == False:#2
+    if slices_active == False and fruit_active == False:#2
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
         V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
@@ -176,6 +175,9 @@ while running:#Некое тело, т.е отвечает за действие
             if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
                 print("Вы попали")
                 koordination_for_arbuz = event.pos
+                left_part_fall_pos = [koordination_for_arbuz]
+                right_part_fall_pos = [koordination_for_arbuz[0] + 10, koordination_for_arbuz[-1]]
+                print(left_part_fall_pos, right_part_fall_pos)
                 proverka_nacgatiy = 1
 
     #Конец цикла событий
