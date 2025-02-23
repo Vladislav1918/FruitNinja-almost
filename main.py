@@ -42,15 +42,20 @@ ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 proverka_nacgatiy = 0
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
+
+
 slice_falling = False
-
-
 slices_active = False
 left_part_fall_pos = []# список для координат левой дольки арбуза
 right_part_fall_pos = []# список для координат правой дольки арбуза
 slises_rotation_angle = 0# текущий угол наклона долек арбуза
-slices_fall_speed_y = 0# Скорость падения долек арбуза
-slises_angle_change = 10# Переменная изменения угла для долек арбуза
+slises_angle_change = 0# Переменная изменения угла для долек арбуза
+slices_fall_speed_y = -10
+rotated_left_part_of_arbuz = None
+rotated_right_part_of_arbuz = None
+napravlenie_slises = 300
+rotated_left_part_of_arbuz_rect = None
+rotated_right_part_of_arbuz_rect = None
 
 
 # Основной цикл
@@ -88,21 +93,17 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect
     screen.blit(Game_screen, (0, 0))
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
-        left_part_fall_pos = koordination_for_arbuz[-1]
-        right_part_fall_pos = koordination_for_arbuz[-1]
-        screen.blit(left_part_of_arbuz, (koordination_for_arbuz[0], left_part_fall_pos))
-        screen.blit(right_part_of_arbuz, (koordination_for_arbuz[0] + 100, right_part_fall_pos))
-        right_part_arbuz_active = True
-        left_part_arbuz_active = True
+        rotated_left_part_of_arbuz = pygame.transform.rotate(left_part_of_arbuz, napravlenie_slises)
+        rotated_right_part_of_arbuz = pygame.transform.rotate(right_part_of_arbuz, napravlenie_slises)
 
-    if slices_active :
-        left_part_fall_pos += 10
-        right_part_fall_pos += 10
+        rotated_left_part_of_arbuz_rect = rotated_left_part_of_arbuz.get_rect(center=(left_part_of_arbuz_x, left_part_of_arbuz_y))
+        rotated_right_part_of_arbuz_rect = rotated_right_part_of_arbuz.get_rect(center=(right_part_of_arbuz_x, right_part_of_arbuz_y))
 
+        vrashenie_dolek()
 
 
 
@@ -129,8 +130,8 @@ def gameplay():
         rotated_image = pygame.transform.rotate(ves_arbuz, (napravlenie - (2  * napravlenie)))#команда отвечает за то, чтобы арбуз мог крутитсья вправо
     else:
         rotated_image = pygame.transform.rotate(ves_arbuz, napravlenie)
-    rotated_image_rect =  rotated_image.get_rect(center=(int(x), int(y)))#center 
-    screen.blit(rotated_image, rotated_image_rect.topleft)
+    rotated_image_rect =  rotated_image.get_rect(center=(int(x), int(y)))#center
+    screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
 
     time_elapsed += shag_time
     current_arbuz_rect = rotated_image_rect
@@ -141,7 +142,17 @@ def gameplay():
 
 
 def vrashenie_dolek():
-    pass
+    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises
+
+    left_part_of_arbuz_y -= slices_fall_speed_y
+    right_part_of_arbuz_y -= slices_fall_speed_y
+
+    screen.blit(rotated_left_part_of_arbuz, rotated_left_part_of_arbuz_rect)
+    screen.blit(rotated_right_part_of_arbuz, rotated_right_part_of_arbuz_rect)
+    napravlenie_slises += 10
+    if left_part_of_arbuz_y <= 0:
+        print("Дольки упали")
+
 
 
 
@@ -173,19 +184,23 @@ while running:#Некое тело, т.е отвечает за действие
                 running = False  # Выход из игры при нажатии на "Выход"
 
             if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
-                print("Вы попали")
                 koordination_for_arbuz = event.pos
-                left_part_fall_pos = [koordination_for_arbuz]
-                right_part_fall_pos = [koordination_for_arbuz[0] + 10, koordination_for_arbuz[-1]]
-                print(left_part_fall_pos, right_part_fall_pos)
+                slises_rotation_angle = 0  # ОБНУЛЯЕМ УГОЛ НАКЛОНА
+                slices_active = True  # Даем значение True, т.к мы попали по арбузу
+                left_part_fall_pos = koordination_for_arbuz
+                right_part_fall_pos = koordination_for_arbuz[0] + 200, koordination_for_arbuz[-1]
+                left_part_of_arbuz_x = left_part_fall_pos[0]
+                left_part_of_arbuz_y = left_part_fall_pos[-1]
+                right_part_of_arbuz_x = right_part_fall_pos[0]
+                right_part_of_arbuz_y = right_part_fall_pos[-1]
                 proverka_nacgatiy = 1
+
 
     #Конец цикла событий
     #Начало цикла While(начало действия)
 
     if proverka_ekranov == 1:
         dt = clock.tick(60) / 1000.0#время между кадрами за секунду(установили FPS = 60)
-        print(dt)
         gameplay()
 
     else:
