@@ -149,7 +149,7 @@ def vrashenie_dolek():
 
     screen.blit(rotated_left_part_of_arbuz, rotated_left_part_of_arbuz_rect)
     screen.blit(rotated_right_part_of_arbuz, rotated_right_part_of_arbuz_rect)
-    napravlenie_slises += 10
+    napravlenie_slises -= 10
     if left_part_of_arbuz_y <= 0:
         print("Дольки упали")
 
