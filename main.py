@@ -20,9 +20,7 @@ Game_screen = pygame.image.load("Paiting/screen_of_game(1900_na_1000).png")
 ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha()#метод который оптимизиркет изображение и сохраняеть альфа-какнал(прозрачность)
 left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
 right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
-
-ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
-current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
+podshet_ochkov = 0
 
 
 # Начальные параметры арбуза
@@ -42,8 +40,10 @@ ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 proverka_nacgatiy = 0
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
+ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
+current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
 
-
+# Переменные для долек арбуза
 slice_falling = False
 slices_active = False
 left_part_fall_pos = []# список для координат левой дольки арбуза
@@ -66,6 +66,9 @@ proverka_ekranov = 0
 font = pygame.font.SysFont(None, 50)
 
 # Создаем кнопки
+text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)
+text_podshet_ochkov_rect = text_podshet_ochkov.get_rect(topleft=(0,15))
+
 text_start = font.render("Начать игру", True, red)
 text_rect_start = text_start.get_rect(center=(screen_width // 2, 210))
 
@@ -95,8 +98,12 @@ def start_screen():
 def gameplay():
     global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect
     screen.blit(Game_screen, (0, 0))
+    screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
+
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
+        fruit_active = False
+
         rotated_left_part_of_arbuz = pygame.transform.rotate(left_part_of_arbuz, napravlenie_slises)
         rotated_right_part_of_arbuz = pygame.transform.rotate(right_part_of_arbuz, napravlenie_slises)
 
@@ -106,12 +113,7 @@ def gameplay():
         vrashenie_dolek()
 
 
-
-
-
-
-
-    if slices_active == False and fruit_active == False:#2
+    if slices_active == False and fruit_active == False:
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
         V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
@@ -130,8 +132,10 @@ def gameplay():
         rotated_image = pygame.transform.rotate(ves_arbuz, (napravlenie - (2  * napravlenie)))#команда отвечает за то, чтобы арбуз мог крутитсья вправо
     else:
         rotated_image = pygame.transform.rotate(ves_arbuz, napravlenie)
-    rotated_image_rect =  rotated_image.get_rect(center=(int(x), int(y)))#center
-    screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
+    rotated_image_rect = rotated_image.get_rect(center=(int(x), int(y)))  # center
+
+    if fruit_active == True:# Сделали проверку т.к без этой проверки арбуз всегда будет выводиться, а с этой строкой арбуз будет выводиться если арбуз активен
+        screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
 
     time_elapsed += shag_time
     current_arbuz_rect = rotated_image_rect
@@ -142,7 +146,7 @@ def gameplay():
 
 
 def vrashenie_dolek():
-    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises
+    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy
 
     left_part_of_arbuz_y -= slices_fall_speed_y
     right_part_of_arbuz_y -= slices_fall_speed_y
@@ -150,8 +154,15 @@ def vrashenie_dolek():
     screen.blit(rotated_left_part_of_arbuz, rotated_left_part_of_arbuz_rect)
     screen.blit(rotated_right_part_of_arbuz, rotated_right_part_of_arbuz_rect)
     napravlenie_slises -= 10
-    if left_part_of_arbuz_y <= 0:
-        print("Дольки упали")
+
+    if left_part_of_arbuz_y >= 1000 and right_part_of_arbuz_y >= 1000:
+        slices_active = False
+        fruit_active = False
+        proverka_nacgatiy = 0
+
+
+
+
 
 
 
@@ -162,13 +173,11 @@ def vrashenie_dolek():
 while running:#Некое тело, т.е отвечает за действие
     #Начало цикла событий
     for event in pygame.event.get():#ОТвечает за события т.е некий мозг программы
-        print(event)
         if event.type == pygame.QUIT:
             running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
-            print(mouse_pos)
 
             if text_rect_start.collidepoint(mouse_pos):
                 proverka_ekranov = 1
@@ -185,6 +194,7 @@ while running:#Некое тело, т.е отвечает за действие
 
             if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
                 koordination_for_arbuz = event.pos
+                podshet_ochkov += 1
                 slises_rotation_angle = 0  # ОБНУЛЯЕМ УГОЛ НАКЛОНА
                 slices_active = True  # Даем значение True, т.к мы попали по арбузу
                 left_part_fall_pos = koordination_for_arbuz
@@ -194,6 +204,7 @@ while running:#Некое тело, т.е отвечает за действие
                 right_part_of_arbuz_x = right_part_fall_pos[0]
                 right_part_of_arbuz_y = right_part_fall_pos[-1]
                 proverka_nacgatiy = 1
+                print(podshet_ochkov)
 
 
     #Конец цикла событий
