@@ -50,7 +50,7 @@ left_part_fall_pos = []# список для координат левой до�
 right_part_fall_pos = []# список для координат правой дольки арбуза
 slises_rotation_angle = 0# текущий угол наклона долек арбуза
 slises_angle_change = 0# Переменная изменения угла для долек арбуза
-slices_fall_speed_y = -10
+slices_fall_speed_y = -15
 rotated_left_part_of_arbuz = None
 rotated_right_part_of_arbuz = None
 napravlenie_slises = 300
@@ -82,7 +82,7 @@ text_exit = font.render("Выход", True, red)
 text_rect_exit = text_exit.get_rect(center=(screen_width // 2, 350))
 
 button_rect = pygame.Rect(300,200,200,100)
-
+#3 марта
 
 
 def start_screen():
@@ -96,7 +96,7 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
 
@@ -153,7 +153,8 @@ def vrashenie_dolek():
 
     screen.blit(rotated_left_part_of_arbuz, rotated_left_part_of_arbuz_rect)
     screen.blit(rotated_right_part_of_arbuz, rotated_right_part_of_arbuz_rect)
-    napravlenie_slises -= 10
+    napravlenie_slises -= 1
+
 
     if left_part_of_arbuz_y >= 1000 and right_part_of_arbuz_y >= 1000:
         slices_active = False
@@ -195,6 +196,8 @@ while running:#Некое тело, т.е отвечает за действие
             if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
                 koordination_for_arbuz = event.pos
                 podshet_ochkov += 1
+                text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)
+                screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
                 slises_rotation_angle = 0  # ОБНУЛЯЕМ УГОЛ НАКЛОНА
                 slices_active = True  # Даем значение True, т.к мы попали по арбузу
                 left_part_fall_pos = koordination_for_arbuz
