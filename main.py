@@ -42,6 +42,8 @@ clock = pygame.time.Clock()  # обьект который контролиру�
 koordination_for_arbuz  = None
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
 current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
+lifes = 3
+bliznec_kolichestvu_nashatiy_po_arbuzu = None
 
 # Переменные для долек арбуза
 slice_falling = False
@@ -56,6 +58,7 @@ rotated_right_part_of_arbuz = None
 napravlenie_slises = 300
 rotated_left_part_of_arbuz_rect = None
 rotated_right_part_of_arbuz_rect = None
+random_speed_for_arbuz_x = random.randint(1, 5)
 
 
 # Основной цикл
@@ -68,6 +71,9 @@ font = pygame.font.SysFont(None, 50)
 # Создаем кнопки
 text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)
 text_podshet_ochkov_rect = text_podshet_ochkov.get_rect(topleft=(0,15))
+
+text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
+text_lifes_rect = text_lifes.get_rect(topleft=(1500 , 15))
 
 text_start = font.render("Начать игру", True, red)
 text_rect_start = text_start.get_rect(center=(screen_width // 2, 210))
@@ -96,9 +102,10 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
+    screen.blit(text_lifes, text_lifes_rect)
 
 
     if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
@@ -142,24 +149,35 @@ def gameplay():
 
     # Проверка выхода за нижнюю границу экрана
     if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
+        lifes = lifes -  1
         fruit_active = False
-
+        text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
+        if lifes == 0:
+            print("Вы проиграли")
 
 def vrashenie_dolek():
-    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy
+    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x
 
-    left_part_of_arbuz_y -= slices_fall_speed_y
-    right_part_of_arbuz_y -= slices_fall_speed_y
+    slices_fall_speed_y += 1
 
-    screen.blit(rotated_left_part_of_arbuz, rotated_left_part_of_arbuz_rect)
-    screen.blit(rotated_right_part_of_arbuz, rotated_right_part_of_arbuz_rect)
-    napravlenie_slises -= 1
+    left_part_of_arbuz_x -= random_speed_for_arbuz_x
+    right_part_of_arbuz_x += random_speed_for_arbuz_x
+    left_part_of_arbuz_y += slices_fall_speed_y
+    right_part_of_arbuz_y += slices_fall_speed_y
+
+
+
+    screen.blit(rotated_left_part_of_arbuz, (left_part_of_arbuz_x, left_part_of_arbuz_y))
+    screen.blit(rotated_right_part_of_arbuz, (right_part_of_arbuz_x, right_part_of_arbuz_y))
+    napravlenie_slises -= 10
 
 
     if left_part_of_arbuz_y >= 1000 and right_part_of_arbuz_y >= 1000:
         slices_active = False
         fruit_active = False
+        slices_fall_speed_y = -15
         proverka_nacgatiy = 0
+        random_speed_for_arbuz_x = random.randint(1, 5)
 
 
 
