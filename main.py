@@ -4,6 +4,7 @@ import math    # Модуль для работы с математикой
 import time
 
 pygame.init()  # Инициализируем pygame
+pygame.mixer.init()# Добавляем микшер в нашу программу
 
 # Настройки экрана
 screen_width, screen_height = 1900, 1000
@@ -20,9 +21,13 @@ Game_screen = pygame.image.load("Paiting/screen_of_game(1900_na_1000).png")
 ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha()#метод который оптимизиркет изображение и сохраняеть альфа-какнал(прозрачность)
 left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
 right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
+
+# Музыка и музыкальные эффекты
+music_cutting = pygame.mixer.Sound("Music_effects/sounds_curring.wav")
+
+
+
 podshet_ochkov = 0
-
-
 # Начальные параметры арбуза
 x0 = 0  # Начальная позиция x
 y0 = screen_height - 50  # Начальная позиция y (например, 950)
@@ -37,7 +42,6 @@ rotation_speed = 5#Команда которая сохраняет скорос
 napravlenie = 300#Переменная отвечает за направление обьекта
 shag_napravleniya = 10#Переменная которая узнает шаг направление т.е на сколько он будет изменяться за кадр
 ugol_poleta = random.uniform(math.radians(70), math.radians(110))
-proverka_nacgatiy = 0
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
@@ -102,13 +106,13 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
     screen.blit(text_lifes, text_lifes_rect)
 
 
-    if proverka_nacgatiy == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
+    if proverka_ekranov == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
         fruit_active = False
 
         rotated_left_part_of_arbuz = pygame.transform.rotate(left_part_of_arbuz, napravlenie_slises)
@@ -153,7 +157,8 @@ def gameplay():
         fruit_active = False
         text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
         if lifes == 0:
-            print("Вы проиграли")
+            proverka_ekranov = 0
+
 
 def vrashenie_dolek():
     global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x
@@ -199,6 +204,8 @@ while running:#Некое тело, т.е отвечает за действие
             mouse_pos = event.pos
 
             if text_rect_start.collidepoint(mouse_pos):
+                lifes = 3#Обновляем значение, чтобы во 2,3,4 и так далее раз у меня выводилось "Количест во жизней - 3", а не 0
+                text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)# Обновляем наш текствввввв
                 proverka_ekranov = 1
 
             elif text_rect_join.collidepoint(mouse_pos):
@@ -212,6 +219,7 @@ while running:#Некое тело, т.е отвечает за действие
                 running = False  # Выход из игры при нажатии на "Выход"
 
             if current_arbuz_rect.collidepoint(mouse_pos):  # Проверяем, было ли нажатие на арбуз
+                music_cutting.play()
                 koordination_for_arbuz = event.pos
                 podshet_ochkov += 1
                 text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)
@@ -224,7 +232,7 @@ while running:#Некое тело, т.е отвечает за действие
                 left_part_of_arbuz_y = left_part_fall_pos[-1]
                 right_part_of_arbuz_x = right_part_fall_pos[0]
                 right_part_of_arbuz_y = right_part_fall_pos[-1]
-                proverka_nacgatiy = 1
+                proverka_ekranov = 1
                 print(podshet_ochkov)
 
 
@@ -235,7 +243,7 @@ while running:#Некое тело, т.е отвечает за действие
         dt = clock.tick(60) / 1000.0#время между кадрами за секунду(установили FPS = 60)
         gameplay()
 
-    else:
+    elif proverka_ekranov == 0:
         start_screen()
 
     pygame.display.flip()#Обновление экрана
