@@ -22,8 +22,10 @@ ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha(
 left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
 right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
 
+
 # Музыка и музыкальные эффекты
-music_cutting = pygame.mixer.Sound("Music_effects/sounds_curring.wav")
+music_cutting = pygame.mixer.Sound("Music_effects/sound_for_kill_arbuz.wav")
+music_brosok_fruit = pygame.mixer.Sound("Music_effects/brosok_fruit.wav")
 
 
 
@@ -106,10 +108,11 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz
+    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
     screen.blit(text_lifes, text_lifes_rect)
+
 
 
     if proverka_ekranov == 1 and koordination_for_arbuz:#Дольки отображаются если koordination_for_arbuz заполнена т.е хранить координаты
@@ -148,6 +151,7 @@ def gameplay():
     if fruit_active == True:# Сделали проверку т.к без этой проверки арбуз всегда будет выводиться, а с этой строкой арбуз будет выводиться если арбуз активен
         screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
 
+
     time_elapsed += shag_time
     current_arbuz_rect = rotated_image_rect
 
@@ -155,13 +159,19 @@ def gameplay():
     if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
         lifes = lifes -  1
         fruit_active = False
+        music_brosok_fruit.play()# Ставим здесь вывод музыки т.к после того как упал арбуз он еще раз вылетает
         text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
         if lifes == 0:
             proverka_ekranov = 0
+            podshet_ochkov = 0
+            text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)#Обновляем нашу переменную с текстом, чтобы при повторном запуске программа на экран выводила  0
+
+
 
 
 def vrashenie_dolek():
-    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x
+
+    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x, koordination_for_arbuz
 
     slices_fall_speed_y += 1
 
@@ -180,10 +190,16 @@ def vrashenie_dolek():
     if left_part_of_arbuz_y >= 1000 and right_part_of_arbuz_y >= 1000:
         slices_active = False
         fruit_active = False
+
         slices_fall_speed_y = -15
+
         proverka_nacgatiy = 0
+
         random_speed_for_arbuz_x = random.randint(1, 5)
+
         koordination_for_arbuz = None
+
+        music_brosok_fruit.play()# Так же здесь т.к после того как упали дольки арбуз вылетает снова
 
 
 
@@ -206,8 +222,10 @@ while running:#Некое тело, т.е отвечает за действие
 
             if text_rect_start.collidepoint(mouse_pos):
                 lifes = 3#Обновляем значение, чтобы во 2,3,4 и так далее раз у меня выводилось "Количест во жизней - 3", а не 0
+                podshet_ochkov = 0
                 text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)# Обновляем наш текствввввв
                 proverka_ekranov = 1
+                music_brosok_fruit.play()# Перед вылетом арбуза выводим звук
 
             elif text_rect_join.collidepoint(mouse_pos):
                 print("Вы присоединились к игре")
