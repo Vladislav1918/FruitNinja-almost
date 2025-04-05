@@ -22,7 +22,7 @@ ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha(
 left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
 right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
 bomba = pygame.image.load("Fruits/bomb.png")
-bomba = pygame.transform.scale(bomba, (251, 174))# Это команда позволяет устанавливает размера бомбы
+bomba = pygame.transform.scale(bomba, (96, 124))# Это команда позволяет устанавливает размера бомбы
 
 
 
@@ -42,7 +42,7 @@ Vy_bomba = 0 # Вертикальная скорость
 Vx_bomba = 0# Горизонтальная скорость
 Vx = 0  # Горизонтальная скорость
 Vy = 0  # Вертикальная скорость
-time_elapsed = 0#Время прошедшее с момет=нта запуска полета
+time_elapsed = 0#Время прошедшее с момента запуска полета
 shag_time = 0.02# Уменьшили шаг времени для плавной анимации
 g = 1000  # Увеличили значение гравитации для заметного эффекта (подберите подходящее значение)
 fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
@@ -250,6 +250,11 @@ while running:#Некое тело, т.е отвечает за действие
 
             if text_rect_start.collidepoint(mouse_pos):
                 lifes = 3#Обновляем значение, чтобы во 2,3,4 и так далее раз у меня выводилось "Количест во жизней - 3", а не 0
+                koordination_for_arbuz = None# Переменная, которая озночает координаты для арбуза
+                fruit_active = False# Переменная, которая обозночает фрукт активен или нет
+                bomba_active = False# Перменная, которая обозночает бомба активна или нет
+                slices_active = False# Переменная, которая обозночает дольки арбуза активны или нет
+                time_elapsed = 0# Переменная, которая считает время прошедшее с момента запуска
                 podshet_ochkov = 0
                 text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)# Обновляем наш текствввввв
                 proverka_ekranov = 1
