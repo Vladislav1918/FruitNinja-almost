@@ -21,6 +21,9 @@ Game_screen = pygame.image.load("Paiting/screen_of_game(1900_na_1000).png")
 ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha()#метод который оптимизиркет изображение и сохраняеть альфа-какнал(прозрачность)
 left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
 right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
+bomba = pygame.image.load("Fruits/bomb.png")
+bomba = pygame.transform.scale(bomba, (251, 174))# Это команда позволяет устанавливает размера бомбы
+
 
 
 # Музыка и музыкальные эффекты
@@ -33,6 +36,10 @@ podshet_ochkov = 0
 # Начальные параметры арбуза
 x0 = 0  # Начальная позиция x
 y0 = screen_height - 50  # Начальная позиция y (например, 950)
+x0_bomba = 0 # Начальная позиция x
+y0_bomba = screen_height - 50# Начальная позиция y (например, 950)
+Vy_bomba = 0 # Вертикальная скорость
+Vx_bomba = 0# Горизонтальная скорость
 Vx = 0  # Горизонтальная скорость
 Vy = 0  # Вертикальная скорость
 time_elapsed = 0#Время прошедшее с момет=нта запуска полета
@@ -50,6 +57,7 @@ ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник 
 current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
 lifes = 3
 bliznec_kolichestvu_nashatiy_po_arbuzu = None
+bomba_active = False
 
 # Переменные для долек арбуза
 slice_falling = False
@@ -108,7 +116,7 @@ def start_screen():
 
 
 def gameplay():
-    global fruit_active, y0, Vx, Vy, time_elapsed, x0, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov
+    global fruit_active, y0, Vx,Vx_bomba,Vy_bomba,Vy, time_elapsed, x0,x0_bomba, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov, bomba, bomba_active
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
     screen.blit(text_lifes, text_lifes_rect)
@@ -127,28 +135,46 @@ def gameplay():
         vrashenie_dolek()
 
 
-    if slices_active == False and fruit_active == False:
+    if slices_active == False and fruit_active == False and bomba_active == False:
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
         V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
+
+        x0_bomba = random.randint(400, screen_width - 400)
+        V0_bomba = random.randint(400, screen_width - 400)
+        ugol_poleta_bomba = random.uniform(math.radians(70), math.radians(110))
+
+
         Vx = V0 * math.cos(ugol_poleta)#Делаем подсчет
         Vy = V0 * math.sin(ugol_poleta)#Делаем подсчет
+
+        Vx_bomba = V0_bomba * math.cos(ugol_poleta_bomba)
+        Vy_bomba = V0_bomba * math.sin(ugol_poleta_bomba)
+
         time_elapsed = 0# Переменная, которая считает сколько времени прошло с начала движения арбуза
         fruit_active = True# И переменая fruit_active должна равняться True, чтобы игра заиграла
+        bomba_active = True
 
     # Расчет текущей позиции арбуза
     x = x0 + Vx * time_elapsed
     y = y0 - (Vy * time_elapsed - 0.5 * g * time_elapsed ** 2)
 
+    x_bomba = x0_bomba + Vx_bomba * time_elapsed
+    y_bomba = y0_bomba - (Vy_bomba * time_elapsed - 0.5 * g * time_elapsed ** 2)
+
 
     napravlenie += 3
     if ugol_poleta <= 90:
+        rotated_image_bomba = pygame.transform.rotate(bomba, (napravlenie - (2 * napravlenie)))
         rotated_image = pygame.transform.rotate(ves_arbuz, (napravlenie - (2  * napravlenie)))#команда отвечает за то, чтобы арбуз мог крутитсья вправо
     else:
+        rotated_image_bomba = pygame.transform.rotate(bomba, (napravlenie - (2 * napravlenie)))
         rotated_image = pygame.transform.rotate(ves_arbuz, napravlenie)
+    rotated_image_bomba_rect = rotated_image_bomba.get_rect(center=(int(x_bomba), int(y_bomba)))
     rotated_image_rect = rotated_image.get_rect(center=(int(x), int(y)))  # center
 
     if fruit_active == True:# Сделали проверку т.к без этой проверки арбуз всегда будет выводиться, а с этой строкой арбуз будет выводиться если арбуз активен
+        screen.blit(rotated_image_bomba, rotated_image_bomba_rect.topleft)
         screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
 
 
@@ -165,7 +191,9 @@ def gameplay():
             proverka_ekranov = 0
             podshet_ochkov = 0
             text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)#Обновляем нашу переменную с текстом, чтобы при повторном запуске программа на экран выводила  0
-
+    if y >= screen_height or x < -bomba.get_width() or x > screen_width:
+        bomba_active = False
+        print("Бомба вылетела за экран")
 
 
 
