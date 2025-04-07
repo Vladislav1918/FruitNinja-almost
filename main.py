@@ -53,17 +53,23 @@ shag_napravleniya = 10#Переменная которая узнает шаг �
 ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
 koordination_for_arbuz  = None
+koordination_for_bomba = None
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
+bomba_rect = bomba.get_rect
 current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
+current_bomba_rect = bomba_rect
 lifes = 3
 bliznec_kolichestvu_nashatiy_po_arbuzu = None
 bomba_active = False
-
 # Переменные для долек арбуза
 slice_falling = False
 slices_active = False
 left_part_fall_pos = []# список для координат левой дольки арбуза
 right_part_fall_pos = []# список для координат правой дольки арбуза
+left_part_of_arbuz_x = 0
+left_part_of_arbuz_y = 0
+right_part_of_arbuz_x = 0
+right_part_of_arbuz_y = 0
 slises_rotation_angle = 0# текущий угол наклона долек арбуза
 slises_angle_change = 0# Переменная изменения угла для долек арбуза
 slices_fall_speed_y = -15
@@ -113,10 +119,22 @@ def start_screen():
     screen.blit(text_exit, text_rect_exit)
 # 1  - падение долек 2 - генерация новго арбуза 3- движение арбуза
 
+def reset_game():
+    global lifes, fruit_active, bomba_active, text_lifes, text_podshet_ochkov, koordination_for_arbuz, time_elapsed, slices_active
+    lifes = 3
+    fruit_active = False
+    bomba_active = False
+    text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
+    text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)
+    koordination_for_arbuz = None
+    time_elapsed = 0
+    slices_active = False
+
+
 
 
 def gameplay():
-    global fruit_active, y0, Vx,Vx_bomba,Vy_bomba,Vy, time_elapsed, x0,x0_bomba, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov, bomba, bomba_active
+    global fruit_active, y0, Vx,Vx_bomba,Vy_bomba,Vy, time_elapsed, x0,x0_bomba, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov, bomba, bomba_active, current_bomba_rect
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
     screen.blit(text_lifes, text_lifes_rect)
@@ -179,7 +197,9 @@ def gameplay():
 
 
     time_elapsed += shag_time
+
     current_arbuz_rect = rotated_image_rect
+    current_bomba_rect = rotated_image_bomba_rect
 
     # Проверка выхода за нижнюю границу экрана
     if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
@@ -248,7 +268,9 @@ while running:#Некое тело, т.е отвечает за действие
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
 
-            if text_rect_start.collidepoint(mouse_pos):
+
+
+            if text_rect_start.collidepoint(mouse_pos) and proverka_ekranov == 0:
                 lifes = 3#Обновляем значение, чтобы во 2,3,4 и так далее раз у меня выводилось "Количест во жизней - 3", а не 0
                 koordination_for_arbuz = None# Переменная, которая озночает координаты для арбуза
                 fruit_active = False# Переменная, которая обозночает фрукт активен или нет
@@ -286,6 +308,12 @@ while running:#Некое тело, т.е отвечает за действие
                 right_part_of_arbuz_y = right_part_fall_pos[-1]
                 proverka_ekranov = 1
                 print(podshet_ochkov)
+
+            if current_bomba_rect.collidepoint(mouse_pos):
+                koordination_for_bomba = event.pos
+                print("Вы попали по бомбе")
+
+
 
 
     #Конец цикла событий
