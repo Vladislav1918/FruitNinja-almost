@@ -16,51 +16,64 @@ white = (255, 255, 255)
 red = (255, 0, 0)
 
 # Загрузка изображений
-Home_screen = pygame.image.load("Paiting/Home_screen_1900_na_1000.png")
-Game_screen = pygame.image.load("Paiting/screen_of_game(1900_na_1000).png")
-ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha()#метод который оптимизиркет изображение и сохраняеть альфа-какнал(прозрачность)
-left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png")
-right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png")
-bomba = pygame.image.load("Fruits/bomb.png")
-bomba = pygame.transform.scale(bomba, (96, 124))# Это команда позволяет устанавливает размера бомбы
+#метод  convert_alpha() оптимизиркет изображение и сохраняеть альфа-какнал(прозрачность), делает незанетые пиксекли прозрачными
+Home_screen = pygame.image.load("Paiting/Home_screen_1900_na_1000.png").convert_alpha()
+Game_screen = pygame.image.load("Paiting/screen_of_game(1900_na_1000).png").convert_alpha()
+ves_arbuz = pygame.image.load("Fruits/целый_арбуз.png").convert_alpha()
+left_part_of_arbuz = pygame.image.load("Fruits/левая_половинка.png").convert_alpha()
+right_part_of_arbuz = pygame.image.load("Fruits/правая_половинка_арбуза.png").convert_alpha()
+bomba = pygame.image.load("Fruits/bomb.png").convert_alpha()
+
 
 
 
 # Музыка и музыкальные эффекты
 music_cutting = pygame.mixer.Sound("Music_effects/sound_for_kill_arbuz.wav")
 music_brosok_fruit = pygame.mixer.Sound("Music_effects/brosok_fruit.wav")
+music_vzrif_arbuza = pygame.mixer.Sound("Music_effects/vzrif_bombi.wav")
 
 
 
-podshet_ochkov = 0
-# Начальные параметры арбуза
-x0 = 0  # Начальная позиция x
-y0 = screen_height - 50  # Начальная позиция y (например, 950)
+
+
+# Переменные для бомбы
 x0_bomba = 0 # Начальная позиция x
 y0_bomba = screen_height - 50# Начальная позиция y (например, 950)
 Vy_bomba = 0 # Вертикальная скорость
 Vx_bomba = 0# Горизонтальная скорость
+bomba_active = False
+koordination_for_bomba = None
+bomba_rect = bomba.get_rect()
+current_bomba_rect = bomba_rect
+bomba_active = False
+
+
+# Перменные для арбуза
+koordination_for_arbuz  = None
+fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
+ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
+current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
+
+# Переменные для функций
+x0 = 0  # Начальная позиция x
+y0 = screen_height - 50  # Начальная позиция y (например, 950)
+lifes = 3
+bliznec_kolichestvu_nashatiy_po_arbuzu = None
 Vx = 0  # Горизонтальная скорость
 Vy = 0  # Вертикальная скорость
 time_elapsed = 0#Время прошедшее с момента запуска полета
 shag_time = 0.02# Уменьшили шаг времени для плавной анимации
 g = 1000  # Увеличили значение гравитации для заметного эффекта (подберите подходящее значение)
-fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
 rotation_angle = 0#Команда которая сохраняет текущий угол вращения
 rotation_speed = 5#Команда которая сохраняет скорость вращения обьекта
 napravlenie = 300#Переменная отвечает за направление обьекта
 shag_napravleniya = 10#Переменная которая узнает шаг направление т.е на сколько он будет изменяться за кадр
 ugol_poleta = random.uniform(math.radians(70), math.radians(110))
 clock = pygame.time.Clock()  # обьект который контролирует FPS и измеряет количество времени между кадрами
-koordination_for_arbuz  = None
-koordination_for_bomba = None
-ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
-bomba_rect = bomba.get_rect()
-current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
-current_bomba_rect = bomba_rect
-lifes = 3
-bliznec_kolichestvu_nashatiy_po_arbuzu = None
-bomba_active = False
+podshet_ochkov = 0
+
+
+
 # Переменные для долек арбуза
 slice_falling = False
 slices_active = False
@@ -120,7 +133,7 @@ def start_screen():
 # 1  - падение долек 2 - генерация новго арбуза 3- движение арбуза
 
 def reset_game():
-    global lifes, fruit_active, bomba_active, text_lifes, text_podshet_ochkov, koordination_for_arbuz, time_elapsed, slices_active
+    global lifes, fruit_active, bomba_active, text_lifes, text_podshet_ochkov, koordination_for_arbuz, time_elapsed, slices_active, podshet_ochkov
     lifes = 3
     fruit_active = False
     bomba_active = False
@@ -129,6 +142,7 @@ def reset_game():
     koordination_for_arbuz = None
     time_elapsed = 0
     slices_active = False
+    podshet_ochkov = 0
 
 
 
@@ -192,8 +206,9 @@ def gameplay():
     rotated_image_rect = rotated_image.get_rect(center=(int(x), int(y)))  # center
 
     if fruit_active == True:# Сделали проверку т.к без этой проверки арбуз всегда будет выводиться, а с этой строкой арбуз будет выводиться если арбуз активен
-        screen.blit(rotated_image_bomba, rotated_image_bomba_rect.topleft)
         screen.blit(rotated_image, rotated_image_rect.topleft)#параметр topleft передает координаты левого верхнего угла rotated_image
+    if bomba_active == True:
+        screen.blit(rotated_image_bomba, rotated_image_bomba_rect.topleft)
 
 
     time_elapsed += shag_time
@@ -311,6 +326,10 @@ while running:#Некое тело, т.е отвечает за действие
 
             if current_bomba_rect.collidepoint(mouse_pos):
                 koordination_for_bomba = event.pos
+                bomba_active = False
+                arbuz_active = False
+                slices_active = False
+                music_brosok_fruit.play()
                 print("Вы попали по бомбе")
 
 
