@@ -49,7 +49,7 @@ bomba_active = False
 
 
 # Перменные для арбуза
-koordination_for_arbuz  = None
+koordination_for_vzrif  = None
 fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
 current_arbuz_rect = ves_arbuz_rect#Сохраняем ves_arbuz_rect в current_arbuz_rect, для того, чтобы отслеживать перемещение арбуза
@@ -133,7 +133,7 @@ def start_screen():
 # 1  - падение долек 2 - генерация новго арбуза 3- движение арбуза
 
 def reset_game():
-    global lifes, fruit_active, bomba_active, text_lifes, text_podshet_ochkov, koordination_for_arbuz, time_elapsed, slices_active, podshet_ochkov
+    global lifes, fruit_active, bomba_active, text_lifes, text_podshet_ochkov, koordination_for_arbuz, time_elapsed, slices_active, podshet_ochkov, proverka_ekranov
     lifes = 3
     fruit_active = False
     bomba_active = False
@@ -143,6 +143,7 @@ def reset_game():
     time_elapsed = 0
     slices_active = False
     podshet_ochkov = 0
+    proverka_ekranov = 0
 
 
 
@@ -168,12 +169,14 @@ def gameplay():
 
 
     if slices_active == False and fruit_active == False and bomba_active == False:
+
         x0 = random.randint(400, screen_width - 400)  # randit работает только с целыми числами
-        V0 = random.uniform(1300, 1200)  # Скорость подобрана экспериментально
+        V0 = random.uniform(1000, 1200)  # Скорость подобрана экспериментально
         ugol_poleta = random.uniform(math.radians(70), math.radians(110))#Выдаем рандомное значение угла полета
 
         x0_bomba = random.randint(400, screen_width - 400)
-        V0_bomba = random.randint(400, screen_width - 400)
+        V0_bomba = random.uniform(1000, 1200)# Скорость, с которой перемещается бомба
+
         ugol_poleta_bomba = random.uniform(math.radians(70), math.radians(110))
 
 
@@ -223,9 +226,7 @@ def gameplay():
         music_brosok_fruit.play()# Ставим здесь вывод музыки т.к после того как упал арбуз он еще раз вылетает
         text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
         if lifes == 0:
-            proverka_ekranov = 0
-            podshet_ochkov = 0
-            text_podshet_ochkov = font.render("Количество очков = " + str(podshet_ochkov), True, red)#Обновляем нашу переменную с текстом, чтобы при повторном запуске программа на экран выводила  0
+            reset_game()
     if y >= screen_height or x < -bomba.get_width() or x > screen_width:
         bomba_active = False
         print("Бомба вылетела за экран")
@@ -234,7 +235,7 @@ def gameplay():
 
 def vrashenie_dolek():
 
-    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x, koordination_for_arbuz
+    global slices_fall_speed_y, left_part_of_arbuz_y, left_part_of_arbuz_x, right_part_of_arbuz_x, right_part_of_arbuz_y, rotated_left_part_of_arbuz, rotated_right_part_of_arbuz, napravlenie_slises, rotated_right_part_of_arbuz_rect, rotated_left_part_of_arbuz_rect, napravlenie_slises, slices_active, fruit_active, proverka_nacgatiy, random_speed_for_arbuz_x, koordination_for_arbuz, proverka_ekranov
 
     slices_fall_speed_y += 1
 
@@ -325,11 +326,15 @@ while running:#Некое тело, т.е отвечает за действие
                 print(podshet_ochkov)
 
             if current_bomba_rect.collidepoint(mouse_pos):
-                koordination_for_bomba = event.pos
+                koordination_for_vzrif = event.pos
                 bomba_active = False
-                arbuz_active = False
-                slices_active = False
+                lifes -= 1
+                text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)
                 music_brosok_fruit.play()
+
+                if lifes == 0:
+                    reset_game()
+
                 print("Вы попали по бомбе")
 
 
