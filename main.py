@@ -220,7 +220,7 @@ def gameplay():
     current_bomba_rect = rotated_image_bomba_rect
 
     # Проверка выхода за нижнюю границу экрана
-    if y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
+    if fruit_active == True and y >= screen_height or x < -ves_arbuz.get_width() or x > screen_width:
         lifes = lifes -  1
         fruit_active = False
         music_brosok_fruit.play()# Ставим здесь вывод музыки т.к после того как упал арбуз он еще раз вылетает
@@ -252,7 +252,9 @@ def vrashenie_dolek():
 
 
     if left_part_of_arbuz_y >= 1000 and right_part_of_arbuz_y >= 1000:
+
         slices_active = False
+
         fruit_active = False
 
         slices_fall_speed_y = -15
@@ -287,16 +289,9 @@ while running:#Некое тело, т.е отвечает за действие
 
 
             if text_rect_start.collidepoint(mouse_pos) and proverka_ekranov == 0:
-                lifes = 3#Обновляем значение, чтобы во 2,3,4 и так далее раз у меня выводилось "Количест во жизней - 3", а не 0
-                koordination_for_arbuz = None# Переменная, которая озночает координаты для арбуза
-                fruit_active = False# Переменная, которая обозночает фрукт активен или нет
-                bomba_active = False# Перменная, которая обозночает бомба активна или нет
-                slices_active = False# Переменная, которая обозночает дольки арбуза активны или нет
-                time_elapsed = 0# Переменная, которая считает время прошедшее с момента запуска
-                podshet_ochkov = 0
-                text_lifes = font.render('Количество жизни = ' + str(lifes), True, red)# Обновляем наш текствввввв
-                proverka_ekranov = 1
                 music_brosok_fruit.play()# Перед вылетом арбуза выводим звук
+                reset_game()
+                proverka_ekranov = 1
 
             elif text_rect_join.collidepoint(mouse_pos):
                 print("Вы присоединились к игре")
@@ -304,7 +299,7 @@ while running:#Некое тело, т.е отвечает за действие
             elif text_rect_settings.collidepoint(mouse_pos):  # Убедитесь, что отступ правильный
                 print("Вы открыли настройки")
 
-            elif text_rect_exit.collidepoint(mouse_pos):
+            elif text_rect_exit.collidepoint(mouse_pos) and proverka_ekranov == 0:
                 print("Вы вышли")
                 running = False  # Выход из игры при нажатии на "Выход"
 
