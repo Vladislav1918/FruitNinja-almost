@@ -45,7 +45,7 @@ bomba_active = False
 koordination_for_bomba = None
 bomba_rect = bomba.get_rect()
 current_bomba_rect = bomba_rect
-bomba_active = False
+
 
 
 # Перменные для арбуза
