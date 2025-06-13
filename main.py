@@ -1,7 +1,7 @@
 import pygame  # Импортируем pygame, чтобы его можно было использовать
 import random  # Импортируем рандом чтобы в дальнейшем его использовать для более интересного игрового процесса
 import math    # Модуль для работы с математикой
-from game_objects class Fruits # импортировали класс fruits из скрипта game_objects
+from game_objects import Fruits # импортировали класс fruits из скрипта game_objects
 import time
 
 pygame.init()  # Инициализируем pygame
@@ -49,8 +49,9 @@ current_bomba_rect = bomba_rect
 
 
 
-# Перменные для арбуза
-arbuz = Fruits(x=0,y=0,image=)
+# Перменные для арбruit
+arbuz = Fruits(screen_width = 1900, screen_height = 1000)
+arbuz.create_fruits()# применяем метод creeate_fruits к обьекту класса arbuz
 koordination_for_vzrif  = None
 fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)
@@ -132,6 +133,7 @@ def start_screen():
     screen.blit(text_join, text_rect_join)
     screen.blit(text_settings, text_rect_settings)
     screen.blit(text_exit, text_rect_exit)
+    screen.blit(arbuz.image, (arbuz.x, arbuz.y))
 # 1  - падение долек 2 - генерация новго арбуза 3- движение арбуза
 
 def reset_game():
@@ -151,7 +153,7 @@ def reset_game():
 
 
 def gameplay():
-    global fruit_active, y0, Vx,Vx_bomba,Vy_bomba,Vy, time_elapsed, x0,x0_bomba, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz,  rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov, bomba, bomba_active, current_bomba_rect
+    global fruit_active, y0, Vx,Vx_bomba,Vy_bomba,Vy, time_elapsed, x0,x0_bomba, g, shag_time, napravlenie, ugol_poleta, current_arbuz_rect,slices_active, slises_rotation_angle, rotated_left_part_of_arbuz, arbuz,   rotated_right_part_of_arbuz, rotated_left_part_of_arbuz_rect, rotated_right_part_of_arbuz_rect, slices_fall_speed_y, bliznec_kolichestvu_nashatiy_po_arbuzu, lifes, text_lifes, proverka_ekranov, koordination_for_arbuz, podshet_ochkov, text_podshet_ochkov, bomba, bomba_active, current_bomba_rect
     screen.blit(Game_screen, (0, 0))
     screen.blit(text_podshet_ochkov, text_podshet_ochkov_rect)
     screen.blit(text_lifes, text_lifes_rect)

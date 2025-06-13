@@ -63,9 +63,3 @@ class Fruits:#создаем класс
 
 
 
-
-arbuz = Fruits(x=0,y=0,image=1, screen_width=100,screen_height = 100)# создал обьект класса
-print(arbuz.image)# выводим значение image у обьекта arbuz
-
-arbuz.create_fruits()# применяем метод класса create_fruits для обьекта класаа arbuz
-print(arbuz.current_fruit)
