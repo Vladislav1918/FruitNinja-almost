@@ -1,6 +1,7 @@
 import pygame  # Импортируем pygame, чтобы его можно было использовать
 import random  # Импортируем рандом чтобы в дальнейшем его использовать для более интересного игрового процесса
 import math    # Модуль для работы с математикой
+from game_objects class Fruits # импортировали класс fruits из скрипта game_objects
 import time
 
 pygame.init()  # Инициализируем pygame
@@ -49,6 +50,7 @@ current_bomba_rect = bomba_rect
 
 
 # Перменные для арбуза
+arbuz = Fruits(x=0,y=0,image=)
 koordination_for_vzrif  = None
 fruit_active = False  # Инициализируем как False, чтобы арбуз инициализировался при запуске
 ves_arbuz_rect = ves_arbuz.get_rect()#Создаем прямоугольник для картинки арбуза( по умолочанию сохраняется на координатах 0, 0)

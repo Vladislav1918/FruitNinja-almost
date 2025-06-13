@@ -4,16 +4,12 @@ import pygame
 
 pygame.init()
 class Fruits:#создаем класс
-    def __init__(self,x,y,image, screen_width, screen_height):#КОНСТРУКТОР класса - указываеи обязательные параметры при создантт обьекта      self - общее название для всех обьеков класса
+    def __init__(self,screen_width=1900, screen_height=1000):#КОНСТРУКТОР класса - указываеи обязательные параметры при создантт обьекта      self - общее название для всех обьеков класса
         # Уникальные параметры - у каждого обьекта они разные
-        self.x = x#сохраняем параматры x в перменную self.x
-        self.y = y#начальная позиция для y
-        self.image = image#сохраняем изображение для фрукта
-
 
         # общие параметры -
-        self.screen_width = 1900
-        self.screen_height = 1000
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self.active = False#сохраняем активность обьекта
         self.current_fruit = None# в пременную сохраняется текущий фрукт
         self.Vx = 0#сохраняем горизонтальную  скорость обьекта
@@ -66,9 +62,10 @@ class Fruits:#создаем класс
 
 
 
+
+
 arbuz = Fruits(x=0,y=0,image=1, screen_width=100,screen_height = 100)# создал обьект класса
 print(arbuz.image)# выводим значение image у обьекта arbuz
 
 arbuz.create_fruits()# применяем метод класса create_fruits для обьекта класаа arbuz
 print(arbuz.current_fruit)
-
